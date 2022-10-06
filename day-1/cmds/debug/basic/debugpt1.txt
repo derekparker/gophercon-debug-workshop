@@ -1,0 +1,187 @@
+(dlv) help
+The following commands are available:
+
+Running the program:
+    call ------------------------ Resumes process, injecting a function call (EXPERIMENTAL!!!)
+    continue (alias: c) --------- Run until breakpoint or program termination.
+    next (alias: n) ------------- Step over to next source line.
+    rebuild --------------------- Rebuild the target executable and restarts it. It does not work if the executable was not built by delve.
+    restart (alias: r) ---------- Restart process.
+    step (alias: s) ------------- Single step through program.
+    step-instruction (alias: si)  Single step a single cpu instruction.
+    stepout (alias: so) --------- Step out of the current function.
+
+Manipulating breakpoints:
+    break (alias: b) ------- Sets a breakpoint.
+    breakpoints (alias: bp)  Print out info for active breakpoints.
+    clear ------------------ Deletes breakpoint.
+    clearall --------------- Deletes multiple breakpoints.
+    condition (alias: cond)  Set breakpoint condition.
+    on --------------------- Executes a command when a breakpoint is hit.
+    toggle ----------------- Toggles on or off a breakpoint.
+    trace (alias: t) ------- Set tracepoint.
+    watch ------------------ Set watchpoint.
+
+Viewing program variables and memory:
+    args ----------------- Print function arguments.
+    display -------------- Print value of an expression every time the program stops.
+    examinemem (alias: x)  Examine raw memory at the given address.
+    locals --------------- Print local variables.
+    print (alias: p) ----- Evaluate an expression.
+    regs ----------------- Print contents of CPU registers.
+    set ------------------ Changes the value of a variable.
+    vars ----------------- Print package variables.
+    whatis --------------- Prints type of an expression.
+
+Listing and switching between threads and goroutines:
+    goroutine (alias: gr) -- Shows or changes current goroutine
+    goroutines (alias: grs)  List program goroutines.
+    thread (alias: tr) ----- Switch to the specified thread.
+    threads ---------------- Print out info for every traced thread.
+
+Viewing the call stack and selecting frames:
+    deferred --------- Executes command in the context of a deferred call.
+    down ------------- Move the current frame down.
+    frame ------------ Set the current frame, or execute command on a different frame.
+    stack (alias: bt)  Print stack trace.
+    up --------------- Move the current frame up.
+
+Other commands:
+    config --------------------- Changes configuration parameters.
+    disassemble (alias: disass)  Disassembler.
+    dump ----------------------- Creates a core dump from the current process state
+    edit (alias: ed) ----------- Open where you are in $DELVE_EDITOR or $EDITOR
+    exit (alias: quit | q) ----- Exit the debugger.
+    funcs ---------------------- Print list of functions.
+    help (alias: h) ------------ Prints the help message.
+    libraries ------------------ List loaded dynamic libraries
+    list (alias: ls | l) ------- Show source code.
+    source --------------------- Executes a file containing a list of delve commands
+    sources -------------------- Print list of source files.
+    transcript ----------------- Appends command output to a file.
+    types ---------------------- Print list of types
+
+Type help followed by a command for full documentation.
+(dlv) list
+> _rt0_amd64_linux() /home/deparker/Code/goroot/src/runtime/rt0_linux_amd64.s:8 (PC: 0x466320)
+Warning: debugging optimized function
+     3:	// license that can be found in the LICENSE file.
+     4:	
+     5:	#include "textflag.h"
+     6:	
+     7:	TEXT _rt0_amd64_linux(SB),NOSPLIT,$-8
+=>   8:		JMP	_rt0_amd64(SB)
+     9:	
+    10:	TEXT _rt0_amd64_linux_lib(SB),NOSPLIT,$0
+    11:		JMP	_rt0_amd64_lib(SB)
+(dlv) continue
+> [unrecovered-panic] runtime.fatalpanic() /home/deparker/Code/goroot/src/runtime/panic.go:1143 (hits goroutine(1):1 total:1) (PC: 0x437da0)
+Warning: debugging optimized function
+	runtime.curg._panic.arg: interface {}(string) "runtime error: index out of range [1] with length 1"
+  1138:	// fatalpanic implements an unrecoverable panic. It is like fatalthrow, except
+  1139:	// that if msgs != nil, fatalpanic also prints panic messages and decrements
+  1140:	// runningPanicDefers once main is blocked from exiting.
+  1141:	//
+  1142:	//go:nosplit
+=>1143:	func fatalpanic(msgs *_panic) {
+  1144:		pc := getcallerpc()
+  1145:		sp := getcallersp()
+  1146:		gp := getg()
+  1147:		var docrash bool
+  1148:		// Switch to the system stack to avoid any stack growth, which
+(dlv) stack
+0  0x0000000000437da0 in runtime.fatalpanic
+   at /home/deparker/Code/goroot/src/runtime/panic.go:1143
+1  0x00000000004374fa in runtime.gopanic
+   at /home/deparker/Code/goroot/src/runtime/panic.go:987
+2  0x000000000043563f in runtime.goPanicIndex
+   at /home/deparker/Code/goroot/src/runtime/panic.go:113
+3  0x000000000049ccda in main.main
+   at ./last-character.go:11
+4  0x000000000043a0d8 in runtime.main
+   at /home/deparker/Code/goroot/src/runtime/proc.go:250
+5  0x0000000000464c21 in runtime.goexit
+   at /home/deparker/Code/goroot/src/runtime/asm_amd64.s:1594
+(dlv) restart
+Process restarted with PID 4165563
+(dlv) break ./last-character.go:11
+Breakpoint 1 set at 0x49cc05 for main.main() ./last-character.go:11
+(dlv) continue
+> main.main() ./last-character.go:11 (hits goroutine(1):1 total:1) (PC: 0x49cc05)
+     6:	)
+     7:	
+     8:	func main() {
+     9:		fmt.Println("Hello Gophers! Pass me a word and I will print the last character!")
+    10:	
+=>  11:		arg := os.Args[1]
+    12:	
+    13:		fmt.Printf("The last character in that word is: %c\n", arg[len(arg)])
+    14:	}
+(dlv) print os.Args
+[]string len: 1, cap: 1, [
+	"/home/deparker/Code/gophercon-debug-workshop/day-1/cmds/debug/ba...+15 more",
+]
+(dlv) rebuild
+(dlv) clearall
+Breakpoint 1 cleared at 0x49ce05 for main.main() ./last-character.go:11
+(dlv) continue
+(dlv) list
+(dlv) restart "debugging is so fun!"
+Process restarted with PID 4167526
+(dlv) continue
+> [unrecovered-panic] runtime.fatalpanic() /home/deparker/Code/goroot/src/runtime/panic.go:1143 (hits goroutine(1):1 total:1) (PC: 0x437da0)
+Warning: debugging optimized function
+	runtime.curg._panic.arg: interface {}(string) "runtime error: index out of range [20] with length 20"
+  1138:	// fatalpanic implements an unrecoverable panic. It is like fatalthrow, except
+  1139:	// that if msgs != nil, fatalpanic also prints panic messages and decrements
+  1140:	// runningPanicDefers once main is blocked from exiting.
+  1141:	//
+  1142:	//go:nosplit
+=>1143:	func fatalpanic(msgs *_panic) {
+  1144:		pc := getcallerpc()
+  1145:		sp := getcallersp()
+  1146:		gp := getg()
+  1147:		var docrash bool
+  1148:		// Switch to the system stack to avoid any stack growth, which
+(dlv) stack
+0  0x0000000000437da0 in runtime.fatalpanic
+   at /home/deparker/Code/goroot/src/runtime/panic.go:1143
+1  0x00000000004374fa in runtime.gopanic
+   at /home/deparker/Code/goroot/src/runtime/panic.go:987
+2  0x000000000043563f in runtime.goPanicIndex
+   at /home/deparker/Code/goroot/src/runtime/panic.go:113
+3  0x000000000049cf53 in main.main
+   at ./last-character.go:18
+4  0x000000000043a0d8 in runtime.main
+   at /home/deparker/Code/goroot/src/runtime/proc.go:250
+5  0x0000000000464c81 in runtime.goexit
+   at /home/deparker/Code/goroot/src/runtime/asm_amd64.s:1594
+(dlv) break ./last-character.go:18
+Breakpoint 2 set at 0x49ceaf for main.main() ./last-character.go:18
+(dlv) continue
+(dlv) restart
+Process restarted with PID 4168008
+(dlv) breakpoints
+Breakpoint runtime-fatal-throw (enabled) at 0x4378e0,0x4379e0 for (multiple functions)() /home/deparker/Code/goroot/src/runtime/panic.go:1059 (0)
+Breakpoint unrecovered-panic (enabled) at 0x437da0 for runtime.fatalpanic() /home/deparker/Code/goroot/src/runtime/panic.go:1143 (1)
+	print runtime.curg._panic.arg
+Breakpoint 2 (enabled) at 0x49ceaf for main.main() ./last-character.go:18 (0)
+(dlv) continue
+> main.main() ./last-character.go:18 (hits goroutine(1):1 total:1) (PC: 0x49ceaf)
+    13:			os.Exit(1)
+    14:		}
+    15:	
+    16:		arg := os.Args[1]
+    17:	
+=>  18:		fmt.Printf("The last character in that word is: %c\n", arg[len(arg)])
+    19:	}
+(dlv) print arg
+"debugging is so fun!"
+(dlv) print len(arg)
+20
+(dlv) rebuild
+(dlv) 
+(dlv) clearall
+Breakpoint 2 cleared at 0x49ceaf for main.main() ./last-character.go:18
+(dlv) continue
+(dlv) exit
