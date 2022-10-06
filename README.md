@@ -2,6 +2,12 @@
 
 Welcome to the Introduction to Debugging Go Programs workshop!
 
+## Cloning this repo to follow along
+
+```
+git clone git@github.com:derekparker/gophercon-debug-workshop.git -b morning-workshop
+```
+
 ## Workshop Requirements
 
 * Go toolchain
