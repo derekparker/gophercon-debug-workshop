@@ -20,4 +20,4 @@ set-core-pattern:
 
 .PHONY: dlv-core
 dlv-core:
-	dlv core ./bin/crash core.<pid>
+	dlv core ./bin/crash core.149621
