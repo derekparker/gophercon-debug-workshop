@@ -9,3 +9,6 @@ run-crash:
 .PHONY: run-crash-gotraceback
 run-crash-gotraceback:
 	GOTRACEBACK=crash ./bin/crash
+
+.PHONY: ulimit
+ulimit -c unlimited
