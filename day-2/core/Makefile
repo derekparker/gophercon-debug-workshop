@@ -12,7 +12,7 @@ run-crash-gotraceback:
 
 .PHONY: ulimit
 ulimit:
-ulimit -c unlimited
+	ulimit -c unlimited
 
 .PHONY: set-core-pattern
 set-core-pattern:
