@@ -12,3 +12,7 @@ run-crash-gotraceback:
 
 .PHONY: ulimit
 ulimit -c unlimited
+
+.PHONY: set-core-pattern
+set-core-pattern:
+	echo core | sudo tee /proc/sys/kernel/core_pattern
