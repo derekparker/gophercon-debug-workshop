@@ -21,4 +21,4 @@ Go programs. Attendees will go from minimal to no knowledge of how to use a debu
 being able to successfully use to tool to perform root cause analysis for bugs in Go programs.
 
 Aside from teaching the basics of Delve, I will be teaching the "debugging mindset". An engineers
-approach to solving a problem is as import, if not more important, than the tools they use.
+approach to solving a problem is as important, if not more important, than the tools they use.
