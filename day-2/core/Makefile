@@ -11,6 +11,7 @@ run-crash-gotraceback:
 	GOTRACEBACK=crash ./bin/crash
 
 .PHONY: ulimit
+ulimit:
 ulimit -c unlimited
 
 .PHONY: set-core-pattern
