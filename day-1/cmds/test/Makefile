@@ -4,7 +4,7 @@ clone-trie:
 
 .PHONY: test
 test:
-	go test -v ./trie
+	cd trie && go test -v .
 
 .PHONY: debug
 debug:
