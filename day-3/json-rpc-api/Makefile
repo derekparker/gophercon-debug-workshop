@@ -4,7 +4,7 @@ build:
 
 .PHONY: run
 run:
-	./bin/myclient localhost:9090 | jq .
+	./bin/myclient localhost:9091 | jq .
 
 .PHONY: run-testprog-with-dlv
 run-testprog-with-dlv:
