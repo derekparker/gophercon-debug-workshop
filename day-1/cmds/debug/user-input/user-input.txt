@@ -1,0 +1,64 @@
+(dlv) continue
+> [unrecovered-panic] runtime.fatalpanic() /home/deparker/Code/goroot/src/runtime/panic.go:1143 (hits goroutine(1):1 total:1) (PC: 0x437e60)
+Warning: debugging optimized function
+	runtime.curg._panic.arg: interface {}(string) "read /dev/stdin: bad file descriptor"
+  1138:	// fatalpanic implements an unrecoverable panic. It is like fatalthrow, except
+  1139:	// that if msgs != nil, fatalpanic also prints panic messages and decrements
+  1140:	// runningPanicDefers once main is blocked from exiting.
+  1141:	//
+  1142:	//go:nosplit
+=>1143:	func fatalpanic(msgs *_panic) {
+  1144:		pc := getcallerpc()
+  1145:		sp := getcallersp()
+  1146:		gp := getg()
+  1147:		var docrash bool
+  1148:		// Switch to the system stack to avoid any stack growth, which
+(dlv) stack
+0  0x0000000000437e60 in runtime.fatalpanic
+   at /home/deparker/Code/goroot/src/runtime/panic.go:1143
+1  0x00000000004375ba in runtime.gopanic
+   at /home/deparker/Code/goroot/src/runtime/panic.go:987
+2  0x00000000004b2a91 in main.gatherSentiment
+   at ./main.go:23
+3  0x00000000004b24fc in main.main
+   at ./main.go:9
+4  0x000000000043a198 in runtime.main
+   at /home/deparker/Code/goroot/src/runtime/proc.go:250
+5  0x00000000004651a1 in runtime.goexit
+   at /home/deparker/Code/goroot/src/runtime/asm_amd64.s:1594
+(dlv) frame 2 list
+Goroutine 1 frame 2 at /home/deparker/Code/gophercon-debug-workshop/day-1/cmds/debug/user-input/main.go:23 (PC: 0x4b2a91)
+    18:		fmt.Println("How would you rate the class from 1-10:")
+    19:	
+    20:		var i int
+    21:		_, err := fmt.Scanln(&i)
+    22:		if err != nil {
+=>  23:			panic(err)
+    24:		}
+    25:	
+    26:		if !withinBounds(&i) {
+    27:			panic("user input not within expected bounds")
+    28:		}
+(dlv) break main.go:23
+Breakpoint 1 set at 0x4b2a45 for main.gatherSentiment() ./main.go:23
+(dlv) restart
+Process restarted with PID 4180375
+(dlv) continue
+> main.gatherSentiment() ./main.go:23 (hits goroutine(1):1 total:1) (PC: 0x4b2a45)
+    18:		fmt.Println("How would you rate the class from 1-10:")
+    19:	
+    20:		var i int
+    21:		_, err := fmt.Scanln(&i)
+    22:		if err != nil {
+=>  23:			panic(err)
+    24:		}
+    25:	
+    26:		if !withinBounds(&i) {
+    27:			panic("user input not within expected bounds")
+    28:		}
+(dlv) print err
+error(*io/fs.PathError) *{
+	Op: "read",
+	Path: "/dev/stdin",
+	Err: error(syscall.Errno) EBADF (9),}
+(dlv) exit
