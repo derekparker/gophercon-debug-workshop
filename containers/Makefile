@@ -38,5 +38,23 @@ run-basic-image-with-ptrace:
 .PHONY: exec-dlv-basic-container-with-src
 exec-dlv-basic-container-with-src:
 	docker cp $$(pwd) $$(docker ps -aqf "ancestor=$(BASIC_IMG)"):/src
-	docker cp /usr/local/go $$(docker ps -aqf "ancestor=$(BASIC_IMG)"):/goroot
+	docker cp /home/deparker/Code/goroot $$(docker ps -aqf "ancestor=$(BASIC_IMG)"):/goroot
 	docker exec -it $$(docker ps -aqf "ancestor=$(BASIC_IMG)") /dlv --init=/src/hack/delve-container-initfile attach 1
+
+.PHONY: build-scratch-image
+build-scratch-image:
+	docker build --pull --rm -f build/Dockerfile-scratch -t $(SCRATCH_IMG):latest .
+
+.PHONY: build-debug-image
+build-debug-image:
+	docker build --pull --rm -f build/Dockerfile-debug -t buggy-debug:latest .
+
+# Run scratch image.
+.PHONY: run-scratch-image
+run-scratch-image:
+	docker run -it --detach -p 8080:8080 --name=buggy-scratch --rm $(SCRATCH_IMG)
+
+# Debug scratch image.
+.PHONY: debug-scratch-image
+debug-scratch-image:
+	docker run -it --rm --pid="container:buggy-scratch" buggy-debug /bin/bash
